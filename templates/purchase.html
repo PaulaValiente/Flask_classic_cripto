@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- Mostrar título de la página -->
+<h2>Conversión de moneda</h2>
+
+
+<!-- Crear formulario para enviar datos al servidor -->
+<form method="POST">
+
+    <!-- Seleccionar moneda origen -->
+    <label>Moneda</label>
+
+    <select name="from">
+        <option value="EUR">EUR</option>
+        <option value="BTC">BTC</option>
+        <option value="ETH">ETH</option>
+        <option value="USDT">USDT</option>
+        <option value="BNB">BNB</option>
+        <option value="XRP">XRP</option>
+        <option value="ADA">ADA</option>
+        <option value="SOL">SOL</option>
+        <option value="DOT">DOT</option>
+        <option value="MATIC">MATIC</option>
+    </select>
+
+
+    <br><br>
+
+
+    <!-- Introducir cantidad -->
+    <label>Cantidad</label>
+
+    <input type="number" name="cantidad" step="any" required>
+
+
+    <br><br>
+
+
+    <!-- Seleccionar moneda destino -->
+    <label>Convertir a</label>
+
+    <select name="to">
+        <option value="EUR">EUR</option>
+        <option value="BTC">BTC</option>
+        <option value="ETH">ETH</option>
+        <option value="USDT">USDT</option>
+        <option value="BNB">BNB</option>
+        <option value="XRP">XRP</option>
+        <option value="ADA">ADA</option>
+        <option value="SOL">SOL</option>
+        <option value="DOT">DOT</option>
+        <option value="MATIC">MATIC</option>
+    </select>
+
+
+    <br><br>
+
+
+    <!-- Crear botón para calcular conversión -->
+    <button type="submit" name="action" value="calcular">
+        Calcular
+    </button>
+
+
+    <!-- Crear botón para confirmar operación -->
+    <button type="submit" name="action" value="aceptar">
+        Confirmar
+    </button>
+
+</form>
+
+
+<br>
+
+
+<!-- Mostrar resultado de la conversión si existe -->
+{% if resultado %}
+
+<h3>Resultado de la conversión</h3>
+
+<p><p>{{ "%.4f"|format(resultado)|replace('.', ',') }}</p></p>
+
+{% endif %}
+
+
+<!-- Mostrar mensaje de error si no hay saldo suficiente -->
+{% if error %}
+
+<p style="color:red">{{ error }}</p>
+
+{% endif %}
+
+
+{% endblock %}
