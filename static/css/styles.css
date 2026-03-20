@@ -1,162 +1,218 @@
-/* Fuente */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
-
-/* Reset */
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
+/* ============================ */
+/* RESET BÁSICO */
+/* ============================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-/* Página */
-body{
-    font-family:'Inter', sans-serif;
-    background:#f3f5f8;
-    color:#333;
+/* ============================ */
+/* BODY */
+/* ============================ */
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #f4f6f8;
+    color: #333;
 }
 
-/* Contenedor principal */
-.container{
-    max-width:1000px;
-    margin:50px auto;
-    background:white;
-    padding:40px;
-    border-radius:8px;
-    box-shadow:0 6px 18px rgba(0,0,0,0.08);
+/* ============================ */
+/* CONTENEDOR PRINCIPAL */
+/* ============================ */
+main {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 25px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
-/* Título principal */
-h1{
-    text-align:center;
-    font-size:34px;
-    font-weight:600;
-    color:#2c3e50;
-    margin-bottom:20px;
+/* ============================ */
+/* HEADER */
+/* ============================ */
+header {
+    background-color: #1e293b;
+    color: white;
+    text-align: center;
+    padding: 25px 20px;
 }
 
-/* Subtítulos */
-h2{
-    margin-top:30px;
-    margin-bottom:15px;
-    font-weight:500;
-    color:#34495e;
+/* ============================ */
+/* MENÚ */
+/* ============================ */
+.menu {
+    margin-top: 15px;
 }
 
-/* MENÚ DE NAVEGACIÓN */
-
-.menu{
-    width:100%;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    gap:30px;
-    margin:25px 0 35px 0;
+.menu a {
+    text-decoration: none;
+    color: #cbd5e1;
+    margin: 0 15px;
+    font-weight: 500;
+    transition: 0.3s;
 }
 
-/* Botones del menú */
-
-.menu a{
-    text-decoration:none;
-    font-size:15px;
-    font-weight:500;
-    color:#1f3a5f;
-    padding:10px 22px;
-    border-radius:6px;
-    background-color:#eef2f7;
-    border:1px solid #d6dde8;
-    transition:all 0.2s ease;
+.menu a:hover {
+    color: white;
 }
 
-/* Hover */
-
-.menu a:hover{
-    background-color:#1f3a5f;
-    color:white;
-    border-color:#1f3a5f;
+/* MENÚ ACTIVO (ENUNCIADO) */
+.menu a.activo {
+    color: #ff6600;
+    font-weight: bold;
 }
 
-/* Formularios */
-
-label{
-    font-size:14px;
-    font-weight:500;
+/* ============================ */
+/* TÍTULOS */
+/* ============================ */
+h1 {
+    font-size: 30px;
 }
 
-input, select{
-    width:100%;
-    padding:10px;
-    margin-top:6px;
-    margin-bottom:16px;
-    border-radius:6px;
-    border:1px solid #d6dce5;
-    font-family:'Inter', sans-serif;
-    font-size:14px;
+h2 {
+    margin-bottom: 20px;
 }
 
-input:focus, select:focus{
-    outline:none;
-    border-color:#1f3a5f;
+h3 {
+    margin-bottom: 10px;
 }
 
-/* Botón */
-
-button{
-    background:#1f3a5f;
-    color:white;
-    border:none;
-    padding:10px 16px;
-    border-radius:6px;
-    font-size:14px;
-    cursor:pointer;
+/* ============================ */
+/* TABLAS */
+/* ============================ */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-button:hover{
-    background:#162a45;
+th {
+    background-color: #334155;
+    color: white;
+    padding: 12px;
+    text-align: center;
 }
 
-/* TABLA */
-
-table{
-    width:100%;
-    border-collapse:collapse;
-    margin-top:20px;
-    font-size:14px;
+td {
+    padding: 10px;
+    text-align: center;
+    border-bottom: 1px solid #e5e7eb;
 }
 
-/* Cabecera */
-
-th{
-    background:#1f3a5f;
-    color:white;
-    padding:12px;
-    text-align:left;
-    font-weight:500;
+tr:hover {
+    background-color: #f1f5f9;
 }
 
-/* Celdas */
-
-td{
-    padding:12px;
-    border-bottom:1px solid #e6eaf0;
+/* ============================ */
+/* FORMULARIOS */
+/* ============================ */
+form {
+    background-color: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-/* Filas alternas */
-
-tr:nth-child(even){
-    background:#f7f9fc;
+label {
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    font-weight: bold;
 }
 
-/* Hover fila */
-
-tr:hover{
-    background:#eef3fb;
+select,
+input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
 }
 
-/* Footer */
+/* ============================ */
+/* BOTONES */
+/* ============================ */
+button {
+    margin-top: 20px;
+    margin-right: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+}
 
-footer{
-    text-align:center;
-    margin-top:40px;
-    font-size:13px;
-    color:#777;
+/* BOTÓN CALCULAR */
+button[value="calcular"] {
+    background-color: #3b82f6;
+    color: white;
+}
+
+button[value="calcular"]:hover {
+    background-color: #2563eb;
+}
+
+/* BOTÓN CONFIRMAR */
+button[value="confirmar"] {
+    background-color: #22c55e;
+    color: white;
+}
+
+button[value="confirmar"]:hover {
+    background-color: #16a34a;
+}
+
+/* ============================ */
+/* RESULTADOS */
+/* ============================ */
+.resultado {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.resultado p {
+    margin: 8px 0;
+}
+
+/* ============================ */
+/* LISTA CARTERA */
+/* ============================ */
+ul {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    list-style: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+ul li {
+    padding: 5px 0;
+}
+
+/* ============================ */
+/* MENSAJES */
+/* ============================ */
+p {
+    margin-top: 10px;
+}
+
+p[style*="red"] {
+    font-weight: bold;
+}
+
+/* ============================ */
+/* FOOTER */
+/* ============================ */
+footer {
+    text-align: center;
+    padding: 15px;
+    margin-top: 40px;
+    background-color: #1e293b;
+    color: white;
 }

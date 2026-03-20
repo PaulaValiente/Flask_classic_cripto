@@ -1,67 +1,44 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
+    <!-- Definir metadatos básicos y CSS -->
 
-    <!-- Definir codificación de caracteres -->
     <meta charset="UTF-8">
-
-    <!-- Definir diseño responsive -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- Definir título de la página -->
     <title>Cripto Movimientos</title>
 
-    <!-- Conectar archivo CSS -->
+    <!-- Cargar estilos -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-
 </head>
-
 
 <body>
 
-    <header>
+<header>
+    <!-- Mostrar cabecera y navegación -->
 
-        <!-- Mostrar título de la aplicación -->
-        <h1>Cripto Movimientos</h1>
+    <h1>Cripto Movimientos</h1>
 
-        <!-- MENÚ DE NAVEGACIÓN -->
-        <nav class="menu"></navclass>
+    <nav class="menu">
+        <!-- Marcar enlace activo según la ruta actual -->
 
-            <!-- Enlace a la página de inicio -->
-            <a href="/">Inicio</a>
+        <a href="/" class="{% if request.path == '/' %}activo{% endif %}">Inicio</a>
+        <a href="/purchase" class="{% if request.path == '/purchase' %}activo{% endif %}">Nueva operación</a>
+        <a href="/status" class="{% if request.path == '/status' %}activo{% endif %}">Estado</a>
+    </nav>
+</header>
 
-            <!-- Enlace a la página de compra -->
-            <a href="/purchase">Operación</a>
+<main>
+    <!-- Insertar contenido dinámico de cada página -->
 
-            <!-- Enlace a la página de estado -->
-            <a href="/status">Estado</a>
+    {% block content %}
+    {% endblock %}
+</main>
 
-        </nav>
+<footer>
+    <!-- Mostrar pie de página -->
 
-        <hr>
-
-    </header>
-
-
-    <!-- CONTENIDO DE LAS PÁGINAS -->
-    <main>
-
-        {% block content %}
-
-        {% endblock %}
-
-    </main>
-
-    <footer>
-
-        <hr>
-
-        <!-- Mostrar texto del footer -->
-        <p>© 2026 - CriptoMovimientos</p>
-
-    </footer>
+    <p>© 2026 CriptoMovimientos</p>
+</footer>
 
 </body>
-
 </html>

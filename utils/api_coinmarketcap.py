@@ -1,38 +1,66 @@
-# Importar requests para hacer peticiones HTTP
 import requests
-
-# Importar la API KEY
 from config import API_KEY
 
+URL_CONVERT = "https://pro-api.coinmarketcap.com/v1/tools/price-conversion"
+URL_MAP = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/map"
 
-# Función para convertir criptomonedas
-def convertir_moneda(moneda_from, moneda_to, cantidad):
+
+def convertir(coin_from, coin_to, cantidad):
     """
-    Consultar la API de CoinMarketCap para convertir monedas
+    Convertir una cantidad de una moneda a otra usando la API
     """
 
-    # Definir URL del endpoint
-    url = "https://pro-api.coinmarketcap.com/v2/tools/price-conversion"
-
-    # Definir parámetros de la consulta
-    params = {
-        "symbol": moneda_from,
-        "convert": moneda_to,
-        "amount": cantidad
-    }
-
-    # Definir cabeceras con la API key
     headers = {
         "X-CMC_PRO_API_KEY": API_KEY
     }
 
-    # Enviar petición a la API
-    response = requests.get(url, headers=headers, params=params)
+    params = {
+        "amount": float(cantidad),
+        "symbol": coin_from,
+        "convert": coin_to
+    }
 
-    # Convertir respuesta a JSON
-    data = response.json()
+    try:
+        response = requests.get(URL_CONVERT, headers=headers, params=params)
 
-    # Obtener el resultado de la conversión
-    resultado = data["data"][0]["quote"][moneda_to]["price"]
+        if response.status_code != 200:
+            print("ERROR API:", response.text)
+            return None
 
-    return resultado
+        data = response.json()
+
+        return data.get("data", {}).get("quote", {}).get(coin_to, {}).get("price")
+
+    except Exception as e:
+        print("ERROR:", e)
+        return None
+
+
+def get_monedas():
+    """
+    Obtener listado de monedas desde la API
+    """
+
+    headers = {
+        "X-CMC_PRO_API_KEY": API_KEY
+    }
+
+    try:
+        response = requests.get(URL_MAP, headers=headers)
+
+        if response.status_code != 200:
+            print("ERROR API:", response.text)
+            return []
+
+        data = response.json()
+
+        monedas = [item["symbol"] for item in data.get("data", [])]
+
+        # Añadir EUR manualmente
+        monedas = ["EUR"] + monedas
+
+        return monedas[:20]
+
+    except Exception as e:
+        print("ERROR:", e)
+        return []

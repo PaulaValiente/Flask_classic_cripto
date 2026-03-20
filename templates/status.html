@@ -1,89 +1,28 @@
 {% extends "base.html" %}
-
 {% block content %}
 
-<!-- Mostrar título de la página -->
+<!-- Mostrar título -->
 <h2>Estado de la inversión</h2>
 
+<!-- Mostrar datos principales -->
+<p>Invertido: {{ invertido | euro }} €</p>
+<p>Recuperado: {{ recuperado | euro }} €</p>
+<p>Valor de compra: {{ valor_compra | euro }} €</p>
+<p>Valor actual: {{ valor_actual | euro }} €</p>
 
-<!-- Mostrar cantidad total invertida -->
-<p>
-<strong>Invertido:</strong>
-{{ "%.2f"|format(invertido)|replace('.', ',') }} €
-</p>
-
-
-<!-- Mostrar cantidad recuperada al vender criptomonedas -->
-<p>
-<strong>Recuperado:</strong>
-{{ "%.2f"|format(recuperado)|replace('.', ',') }} €
-</p>
-
-
-<!-- Mostrar valor de compra de las criptomonedas -->
-<p>
-<strong>Valor de compra:</strong>
-{{ "%.2f"|format(valor_compra)|replace('.', ',') }} €
-</p>
-
-
-<!-- Mostrar valor actual de las criptomonedas -->
-<p>
-<strong>Valor actual:</strong>
-{{ "%.2f"|format(valor_actual)|replace('.', ',') }} €
-</p>
-
-
-<!-- Mostrar resultado de la inversión -->
-<h3>Resultado</h3>
-
-
-<!-- Comprobar si la inversión tiene ganancia -->
+<!-- Mostrar ganancia o pérdida -->
 {% if ganancia >= 0 %}
-
-<!-- Mostrar ganancia en color verde -->
-<p style="color:green">
-Ganancia:
-{{ "%.2f"|format(ganancia)|replace('.', ',') }} €
-</p>
-
+<p style="color:green">Ganancia: {{ ganancia | euro }} €</p>
 {% else %}
-
-<!-- Mostrar pérdida en color rojo -->
-<p style="color:red">
-Pérdida:
-{{ "%.2f"|format(ganancia)|replace('.', ',') }} €
-</p>
-
+<p style="color:red">Pérdida: {{ ganancia | euro }} €</p>
 {% endif %}
 
-
-<!-- Mostrar cartera actual de criptomonedas -->
-<h3>Cartera actual</h3>
-
-
-<!-- Comprobar si existen criptomonedas en la cartera -->
-{% if cartera %}
-
+<!-- Mostrar cartera -->
+<h3>Cartera</h3>
 <ul>
-
-<!-- Recorrer todas las criptomonedas almacenadas -->
-{% for moneda, cantidad in cartera.items() %}
-
-<!-- Mostrar moneda y cantidad disponible -->
-<li>
-{{ moneda }} → {{ "%.6f"|format(cantidad)|replace('.', ',') }}
-</li>
-
-{% endfor %}
-
+    {% for moneda, cantidad in cartera.items() %}
+    <li>{{ moneda }}: {{ cantidad | euro }}</li>
+    {% endfor %}
 </ul>
-
-{% else %}
-
-<!-- Mostrar mensaje si no hay criptomonedas -->
-<p>No hay criptomonedas en cartera</p>
-
-{% endif %}
 
 {% endblock %}

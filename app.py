@@ -1,22 +1,11 @@
-# Importar Flask
 from flask import Flask, render_template, request
-
-# Importar funciones de base de datos
-from database import (
-    create_table,
-    get_movimientos,
-    insert_movimiento,
-    get_saldo,
-    get_invertido,
-    get_recuperado
-)
-
-# Importar función de conversión
-from utils.api_coinmarketcap import convertir_moneda
-
-# Importar datetime
 from datetime import datetime
 
+# Importar funciones de base de datos
+from database import create_table, insert_movimiento, get_movimientos, get_saldo
+
+# Importar funciones de API
+from utils.api_coinmarketcap import convertir, get_monedas
 
 # Crear aplicación Flask
 app = Flask(__name__)
@@ -24,122 +13,131 @@ app = Flask(__name__)
 # Crear tabla si no existe
 create_table()
 
+# Crear filtro para formatear números a formato europeo
+def formato_euro(valor):
+    try:
+        # Formatear a 2 decimales y convertir punto en coma
+        return f"{valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+    except:
+        # Devolver valor sin modificar si hay error
+        return valor
 
-# -------------------------------
-# RUTA PRINCIPAL
-# -------------------------------
+# Registrar filtro en Jinja
+app.jinja_env.filters["euro"] = formato_euro
 
+
+# Ruta principal para mostrar historial
 @app.route("/")
 def index():
-    """
-    Mostrar movimientos registrados
-    """
-
+    # Obtener movimientos de la base de datos
     movimientos = get_movimientos()
-
+    
+    # Renderizar plantilla index
     return render_template("index.html", movimientos=movimientos)
 
 
-# -------------------------------
-# RUTA PURCHASE
-# -------------------------------
-
+# Ruta para realizar compra/venta
 @app.route("/purchase", methods=["GET", "POST"])
 def purchase():
-    """
-    Mostrar formulario y procesar operaciones
-    """
-
-    resultado = None
+    # Obtener listado de monedas
+    monedas = get_monedas()
+    
+    # Inicializar variables
+    cantidad_to = None
     error = None
 
+    # Comprobar si la petición es POST
     if request.method == "POST":
+        
+        # Obtener datos del formulario
+        moneda_from = request.form.get("coin_from")
+        moneda_to = request.form.get("coin_to")
+        accion = request.form.get("action")
 
-        moneda_from = request.form["from"]
-        moneda_to = request.form["to"]
-        cantidad = float(request.form["cantidad"])
-        accion = request.form["action"]
+        # Validar cantidad introducida
+        try:
+            cantidad_from = float(request.form.get("cantidad"))
+        except:
+            error = "Cantidad inválida"
+            return render_template("purchase.html", monedas=monedas, error=error)
 
-        # Calcular conversión
-        resultado = convertir_moneda(moneda_from, moneda_to, cantidad)
+        # Validar que las monedas sean distintas
+        if moneda_from == moneda_to:
+            error = "No se puede convertir la misma moneda"
+            return render_template("purchase.html", monedas=monedas, error=error)
 
-        if accion == "aceptar":
+        # Validar saldo si no es EUR
+        if moneda_from != "EUR":
+            saldo = get_saldo(moneda_from)
+            if cantidad_from > saldo:
+                error = "Saldo insuficiente"
+                return render_template("purchase.html", monedas=monedas, error=error)
 
-            # Validar saldo si no es EUR
-            if moneda_from != "EUR":
+        # Realizar conversión usando API
+        precio = convertir(moneda_from, moneda_to, cantidad_from)
 
-                saldo = get_saldo(moneda_from)
+        # Comprobar error en API
+        if precio is None:
+            error = "Error en API"
+            return render_template("purchase.html", monedas=monedas, error=error)
 
-                if cantidad > saldo:
-                    error = "No tienes suficiente saldo"
-                    return render_template("purchase.html", resultado=resultado, error=error)
+        # Guardar resultado de conversión
+        cantidad_to = precio
 
-            # Obtener fecha actual
-            fecha = datetime.now().strftime("%Y-%m-%d")
+        # Guardar operación solo si se confirma
+        if accion == "confirmar":
+            now = datetime.now()
 
-            # Obtener hora actual
-            hora = datetime.now().strftime("%H:%M:%S")
-
-            # Guardar movimiento
             insert_movimiento(
-                fecha,
-                hora,
+                now.strftime("%Y-%m-%d"),
+                now.strftime("%H:%M:%S"),
                 moneda_from,
-                cantidad,
+                cantidad_from,
                 moneda_to,
-                resultado
+                cantidad_to
             )
 
-    return render_template("purchase.html", resultado=resultado, error=error)
+            return render_template("purchase.html", monedas=monedas, cantidad_to=cantidad_to)
+
+    # Renderizar plantilla
+    return render_template("purchase.html", monedas=monedas, cantidad_to=cantidad_to, error=error)
 
 
-# -------------------------------
-# RUTA STATUS
-# -------------------------------
-
+# Ruta para mostrar estado de inversión
 @app.route("/status")
 def status():
-    """
-    Calcular estado de la inversión
-    """
+    # Obtener monedas disponibles
+    monedas = get_monedas()
 
-    # Obtener total invertido
-    invertido = get_invertido()
+    # Crear cartera
+    cartera = {}
+    for m in monedas:
+        if m != "EUR":
+            saldo = get_saldo(m)
+            if saldo != 0:
+                cartera[m] = saldo
 
-    # Obtener total recuperado
-    recuperado = get_recuperado()
+    # Obtener saldo en EUR
+    saldo_eur = get_saldo("EUR")
+
+    # Calcular invertido y recuperado
+    invertido = -saldo_eur if saldo_eur < 0 else 0
+    recuperado = saldo_eur if saldo_eur > 0 else 0
 
     # Calcular valor de compra
     valor_compra = invertido - recuperado
 
-    criptos = ["BTC", "ETH", "USDT", "BNB", "XRP", "ADA", "SOL", "DOT", "MATIC"]
-
+    # Calcular valor actual de la cartera
     valor_actual = 0
+    for cripto, cantidad in cartera.items():
+        precio = convertir(cripto, "EUR", 1)
+        if precio:
+            valor_actual += cantidad * precio
 
-    cartera = {}
+    # Calcular ganancia o pérdida
+    ganancia = valor_actual - valor_compra
 
-    # Calcular saldo y valor de cada cripto
-    for cripto in criptos:
-
-        saldo = get_saldo(cripto)
-
-        if saldo > 0:
-
-            cartera[cripto] = saldo
-
-            euros = convertir_moneda(cripto, "EUR", saldo)
-
-            valor_actual += euros
-
-    # Redondear valores
-    valor_actual = round(valor_actual, 2)
-    valor_compra = round(valor_compra, 2)
-    invertido = round(invertido, 2)
-    recuperado = round(recuperado, 2)
-
-    # Calcular ganancia
-    ganancia = round(valor_actual - valor_compra, 2)
-
+    # Renderizar plantilla status
     return render_template(
         "status.html",
         invertido=invertido,
@@ -149,9 +147,8 @@ def status():
         ganancia=ganancia,
         cartera=cartera
     )
-# -------------------------------
-# EJECUTAR APP
-# -------------------------------
 
+
+# Ejecutar aplicación
 if __name__ == "__main__":
     app.run(debug=True)

@@ -1,71 +1,39 @@
 {% extends "base.html" %}
-
 {% block content %}
 
-<!-- Mostrar título de la página -->
-<h2>Movimientos</h2>
+<!-- Mostrar título -->
+<h2>Historial de movimientos</h2>
 
-
-<!-- Comprobar si no hay movimientos -->
-{% if movimientos|length == 0 %}
-
-<!-- Mostrar mensaje si la base de datos está vacía -->
-<p>SIN MOVIMIENTOS</p>
-
-{% else %}
-
-
-<!-- Crear tabla para mostrar los movimientos -->
-<table border="1" cellpadding="6">
-
-
-<!-- Crear cabecera de la tabla -->
-<tr>
-
-<th>Fecha</th>
-<th>Hora</th>
-<th>Origen</th>
-<th>Cantidad</th>
-<th>Destino</th>
-<th>Cantidad</th>
-
-</tr>
-
-
-<!-- Recorrer todos los movimientos almacenados -->
-{% for m in movimientos %}
-
-
-<!-- Crear fila de la tabla para cada movimiento -->
-<tr>
-
-<!-- Mostrar fecha -->
-<td>{{ m.date }}</td>
-
-<!-- Mostrar hora -->
-<td>{{ m.time }}</td>
-
-<!-- Mostrar moneda origen -->
-<td>{{ m.moneda_from }}</td>
-
-<!-- Mostrar cantidad origen -->
-<td>{{ "%.2f"|format(m.cantidad_from)|replace('.', ',') }}</td>
-
-<!-- Mostrar moneda destino -->
-<td>{{ m.moneda_to }}</td>
-
-<!-- Mostrar cantidad destino -->
-<td>{{ "%.4f"|format(m.cantidad_to)|replace('.', ',') }}</td>
-
-</tr>
-
-
-{% endfor %}
-
-
+<!-- Comprobar si hay movimientos -->
+{% if movimientos %}
+<table>
+    <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Moneda From</th>
+            <th>Cantidad From</th>
+            <th>Moneda To</th>
+            <th>Cantidad To</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Recorrer movimientos -->
+        {% for m in movimientos %}
+        <tr>
+            <td>{{ m.date }}</td>
+            <td>{{ m.time }}</td>
+            <td>{{ m.moneda_from }}</td>
+            <td>{{ m.cantidad_from | euro }}</td>
+            <td>{{ m.moneda_to }}</td>
+            <td>{{ m.cantidad_to | euro }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
 </table>
-
-
+{% else %}
+<!-- Mostrar mensaje si no hay datos -->
+<p>Sin movimientos</p>
 {% endif %}
 
 {% endblock %}

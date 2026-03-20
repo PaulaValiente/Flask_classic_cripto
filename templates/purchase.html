@@ -1,96 +1,50 @@
 {% extends "base.html" %}
-
 {% block content %}
 
-<!-- Mostrar título de la página -->
-<h2>Conversión de moneda</h2>
+<!-- Mostrar título -->
+<h2>Compra / Venta / Tradeo</h2>
 
+<!-- Mostrar error si existe -->
+{% if error %}
+<p style="color:red">{{ error }}</p>
+{% endif %}
 
-<!-- Crear formulario para enviar datos al servidor -->
+<!-- Crear formulario -->
 <form method="POST">
 
     <!-- Seleccionar moneda origen -->
-    <label>Moneda</label>
-
-    <select name="from">
-        <option value="EUR">EUR</option>
-        <option value="BTC">BTC</option>
-        <option value="ETH">ETH</option>
-        <option value="USDT">USDT</option>
-        <option value="BNB">BNB</option>
-        <option value="XRP">XRP</option>
-        <option value="ADA">ADA</option>
-        <option value="SOL">SOL</option>
-        <option value="DOT">DOT</option>
-        <option value="MATIC">MATIC</option>
+    <label>From:</label>
+    <select name="coin_from">
+        {% for m in monedas %}
+        <option value="{{ m }}">{{ m }}</option>
+        {% endfor %}
     </select>
-
-
-    <br><br>
-
 
     <!-- Introducir cantidad -->
-    <label>Cantidad</label>
-
-    <input type="number" name="cantidad" step="any" required>
-
-
-    <br><br>
-
+    <label>Cantidad:</label>
+    <input type="number" step="any" name="cantidad" required>
 
     <!-- Seleccionar moneda destino -->
-    <label>Convertir a</label>
-
-    <select name="to">
-        <option value="EUR">EUR</option>
-        <option value="BTC">BTC</option>
-        <option value="ETH">ETH</option>
-        <option value="USDT">USDT</option>
-        <option value="BNB">BNB</option>
-        <option value="XRP">XRP</option>
-        <option value="ADA">ADA</option>
-        <option value="SOL">SOL</option>
-        <option value="DOT">DOT</option>
-        <option value="MATIC">MATIC</option>
+    <label>To:</label>
+    <select name="coin_to">
+        {% for m in monedas %}
+        <option value="{{ m }}">{{ m }}</option>
+        {% endfor %}
     </select>
 
+    <!-- Botón calcular -->
+    <button type="submit" name="action" value="calcular">Calcular</button>
 
-    <br><br>
-
-
-    <!-- Crear botón para calcular conversión -->
-    <button type="submit" name="action" value="calcular">
-        Calcular
-    </button>
-
-
-    <!-- Crear botón para confirmar operación -->
-    <button type="submit" name="action" value="aceptar">
-        Confirmar
-    </button>
+    <!-- Botón confirmar -->
+    <button type="submit" name="action" value="confirmar">Confirmar</button>
 
 </form>
 
-
-<br>
-
-
-<!-- Mostrar resultado de la conversión si existe -->
-{% if resultado %}
-
-<h3>Resultado de la conversión</h3>
-
-<p><p>{{ "%.4f"|format(resultado)|replace('.', ',') }}</p></p>
-
+<!-- Mostrar resultado -->
+{% if cantidad_to %}
+<div class="resultado">
+    <p><strong>Resultado:</strong> {{ cantidad_to | euro }}</p>
+</div>
 {% endif %}
-
-
-<!-- Mostrar mensaje de error si no hay saldo suficiente -->
-{% if error %}
-
-<p style="color:red">{{ error }}</p>
-
-{% endif %}
-
 
 {% endblock %}
